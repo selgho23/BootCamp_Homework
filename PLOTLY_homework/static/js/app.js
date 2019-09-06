@@ -1,10 +1,8 @@
 function buildMetadata(sample) {
 
-  // @TODO: Complete the following function that builds the metadata panel
-
-
   // Fetch and display metadata
   var meta_url = "/metadata/" + String(sample);
+
   d3.json(meta_url).then(meta_data => {
     metadata_panel = d3.select("#sample-metadata");
     metadata_panel.html("");
@@ -15,32 +13,42 @@ function buildMetadata(sample) {
         .text(`${key_string}: ${value}`);
     };
 
-  });
+    buildGauge(meta_data['WFREQ']);
 
-  // BONUS: Build the Gauge Chart
-  buildGauge();
+  });
 }
 
-function buildGauge() {
+// Build Gauge Chart
+function buildGauge(wfreq) {
   var data = [{
     domain: {
       x: [0, 1],
       y: [0, 1]
     },
-    value: 450,
-    title: { text: "Belly Button Washing Frequency" },
-    type: "indicator", mode: "gauge+number+delta", delta: { reference: 380 }, gauge:
+    value: wfreq,
+    title: {
+      text: "<b>Belly Button Washing Frequency<b><br>" +
+        "<span style='font-size:0.8em;color:gray'>Scrubs Per Week</span>"
+    },
+    type: "indicator", mode: "gauge+number", gauge:
     {
-      axis: { range: [null, 500] }, steps: [{ range: [0, 250], color: "lightgray" },
-      { range: [250, 400], color: "gray" }], threshold: {
-        line: { color: "red", width: 4 },
-        thickness: 0.75, value: 490
-      }
+      axis: { range: [0, 9] },
+      steps: [
+        { range: [0, 1], color: "#ffffff" },
+        { range: [1, 2], color: "#f5f5dc" },
+        { range: [2, 3], color: "#eeeec3" },
+        { range: [3, 4], color: "#c6ecd7" },
+        { range: [4, 5], color: "#9fdfbc" },
+        { range: [5, 6], color: "#79d2a1" },
+        { range: [6, 7], color: "#80b380" },
+        { range: [7, 8], color: "#609f60" },
+        { range: [8, 9], color: "#4d804d" }
+      ],
+      bar: {color: "darkred", thickness: 0.2}, 
     }
   }];
 
-  var layout = { width: 600, height: 500, margin: { t: 0, b: 0 } };
-  Plotly.newPlot("gauge", data, layout);
+  Plotly.newPlot("gauge", data);
 }
 
 function buildCharts(sample) {
